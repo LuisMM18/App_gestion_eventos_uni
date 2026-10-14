@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">App gestion eventos uni</string>
-    <string name="default_web_client_id">562512967189-1mt0sl3dvfu4j03rt7473u257hcbvekt.apps.googleusercontent.com</string>
 
     <!-- Toolbar -->
     <string name="TituloRL">Gestión de Eventos Universitarios</string>
