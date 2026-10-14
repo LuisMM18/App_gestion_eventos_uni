@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/Item_Eventos"
+        android:icon="@drawable/ic_eventos"
+        android:title="@string/menu_eventos" />
+
+    <item
+        android:id="@+id/Item_Publicar"
+        android:icon="@drawable/ic_publicar"
+        android:title="@string/menu_publicar" />
+
+    <item
+        android:id="@+id/Item_Proyectos"
+        android:icon="@drawable/ic_proyectos"
+        android:title="@string/menu_proyectos" />
+
+    <item
+        android:id="@+id/Item_Interesados"
+        android:icon="@drawable/ic_interesados"
+        android:title="@string/menu_interesados" />
+
+    <item
+        android:id="@+id/Item_CerrarSesion"
+        android:icon="@drawable/ic_cerrar_sesion"
+        android:title="@string/menu_cerrar_sesion" />
+
+</menu>

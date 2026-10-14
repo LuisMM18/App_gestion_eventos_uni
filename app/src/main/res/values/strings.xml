@@ -1,3 +1,42 @@
 <resources>
     <string name="app_name">App gestion eventos uni</string>
+    <string name="default_web_client_id">562512967189-1mt0sl3dvfu4j03rt7473u257hcbvekt.apps.googleusercontent.com</string>
+
+    <!-- Toolbar -->
+    <string name="TituloRL">Gestión de Eventos Universitarios</string>
+
+    <!-- Menú inferior -->
+    <string name="menu_eventos">Eventos</string>
+    <string name="menu_publicar">Publicar</string>
+    <string name="menu_proyectos">Proyectos</string>
+    <string name="menu_interesados">Interesados</string>
+    <string name="menu_cerrar_sesion">Cerrar sesión</string>
+
+    <!-- Títulos de vistas -->
+    <string name="titulo_eventos">Eventos Universitarios</string>
+    <string name="titulo_publicar">Publicar Proyecto</string>
+    <string name="titulo_proyectos">Proyectos Publicados</string>
+    <string name="titulo_interesados">Registro de Interesados</string>
+    <string name="titulo_cerrar_sesion">Cerrar Sesión</string>
+
+    <!-- Iniciar Sesión / Opciones Login -->
+    <string name="Ingresar_email">Ingresar con email</string>
+    <string name="Ingresar_google">Ingresar con google</string>
+    <string name="Txt_login">Login de usuario</string>
+    <string name="Et_email">Email</string>
+    <string name="Et_password">Contraseña</string>
+    <string name="Btn_ingresar">Ingresar</string>
+    <string name="Txt_no_cuenta">¿No tienes cuenta?</string>
+    <string name="Txt_registrarme">Registrarme</string>
+
+    <!-- Registro -->
+    <string name="Txt_registro">Registro de usuario</string>
+    <string name="Et_r_password">Repetir contraseña</string>
+    <string name="Btn_registrar">Registrar</string>
+
+    <!-- Sesión -->
+    <string name="Btn_cerrar_sesion">Cerrar sesión</string>
+    <string name="mensaje_cerrar_sesion_pregunta">¿Estás seguro de que deseas cerrar la sesión?</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="aceptar">Aceptar</string>
 </resources>
