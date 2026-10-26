@@ -53,8 +53,18 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RvProyectos"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_proyecto" />
+
     <!-- Placeholder list or empty state -->
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/CardVacioProyectos"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

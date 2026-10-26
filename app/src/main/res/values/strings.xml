@@ -29,7 +29,8 @@
     <string name="Txt_registrarme">Registrarme</string>
 
     <!-- Registro -->
-    <string name="Txt_registro">Registro de usuario</string>
+    <string name="Txt_registro">Registro de estudiante</string>
+    <string name="Et_nombres">Nombre completo</string>
     <string name="Et_r_password">Repetir contraseña</string>
     <string name="Btn_registrar">Registrar</string>
 
