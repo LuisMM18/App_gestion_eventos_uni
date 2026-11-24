@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appgestioneventosuni.databinding.ActivityRegistroEmailBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 
 class Registro_email : AppCompatActivity() {
@@ -16,6 +17,7 @@ class Registro_email : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
 
+    private var nombres = ""
     private var email = ""
     private var password = ""
     private var r_password = ""
@@ -37,11 +39,15 @@ class Registro_email : AppCompatActivity() {
     }
 
     private fun validarInfo() {
+        nombres = binding.EtNombres.text.toString().trim()
         email = binding.EtEmail.text.toString().trim()
         password = binding.EtPassword.text.toString().trim()
         r_password = binding.EtRPassword.text.toString().trim()
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (nombres.isEmpty()) {
+            binding.EtNombres.error = "Ingrese su nombre completo"
+            binding.EtNombres.requestFocus()
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.EtEmail.error = "Email inválido"
             binding.EtEmail.requestFocus()
         } else if (email.isEmpty()) {
@@ -67,6 +73,10 @@ class Registro_email : AppCompatActivity() {
 
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(nombres)
+                    .build()
+                firebaseAuth.currentUser?.updateProfile(profileUpdates)
                 llenarInfoBD()
             }
             .addOnFailureListener { exception ->
@@ -85,7 +95,7 @@ class Registro_email : AppCompatActivity() {
         val uidUsuario = firebaseAuth.uid ?: ""
 
         val hashMap = HashMap<String, Any>()
-        hashMap["nombres"] = ""
+        hashMap["nombres"] = nombres
         hashMap["codigoTelefono"] = ""
         hashMap["telefono"] = ""
         hashMap["urlImagenPerfil"] = ""

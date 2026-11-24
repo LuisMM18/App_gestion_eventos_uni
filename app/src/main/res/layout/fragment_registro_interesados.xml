@@ -46,14 +46,24 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Revisa los alumnos y participantes interesados en tus proyectos."
+                    android:text="Consulta los estudiantes interesados en eventos y proyectos académicos."
                     android:textSize="13sp"
                     android:textColor="@color/gray_text" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RvInteresados"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_interesado" />
+
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/CardVacioInteresados"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

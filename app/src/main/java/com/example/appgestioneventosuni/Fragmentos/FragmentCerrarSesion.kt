@@ -12,6 +12,10 @@ import com.example.appgestioneventosuni.OpcionesLogin
 import com.example.appgestioneventosuni.R
 import com.example.appgestioneventosuni.databinding.FragmentCerrarSesionBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class FragmentCerrarSesion : Fragment() {
 
@@ -46,7 +50,19 @@ class FragmentCerrarSesion : Fragment() {
             if (!nombre.isNullOrEmpty()) {
                 binding.TvNombreUsuario.text = nombre
             } else {
-                binding.TvNombreUsuario.text = "Usuario Universitario"
+                binding.TvNombreUsuario.text = "Estudiante Universitario"
+                FirebaseDatabase.getInstance().getReference("Usuarios")
+                    .child(usuarioActual.uid)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            val nombreBD = snapshot.child("nombres").value?.toString()
+                            if (!nombreBD.isNullOrEmpty() && _binding != null) {
+                                binding.TvNombreUsuario.text = nombreBD
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {}
+                    })
             }
         }
 
