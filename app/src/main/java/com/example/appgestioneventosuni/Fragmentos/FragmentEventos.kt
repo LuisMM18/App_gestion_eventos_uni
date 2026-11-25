@@ -31,6 +31,7 @@ class FragmentEventos : Fragment() {
     private lateinit var adaptadorEvento: AdaptadorEvento
     private lateinit var firebaseAuth: FirebaseAuth
     private var semillaVerificada = false
+    private var interesesListener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,10 +50,38 @@ class FragmentEventos : Fragment() {
         binding.RvEventos.adapter = adaptadorEvento
 
         cargarEventos()
+        escucharInteresesUsuario()
 
         binding.FabPublicarEvento.setOnClickListener {
             mostrarDialogoPublicarEvento()
         }
+    }
+
+    private fun escucharInteresesUsuario() {
+        val uid = firebaseAuth.currentUser?.uid ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("Interesados")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (_binding == null) return
+                val ids = HashSet<String>()
+                for (ds in snapshot.children) {
+                    val uidRegistro = ds.child("uidUsuario").value?.toString()
+                    val tipo = ds.child("tipoElemento").value?.toString()
+                    val idElemento = ds.child("idElemento").value?.toString()
+                    if (uidRegistro == uid &&
+                        (tipo.isNullOrEmpty() || tipo.equals("Evento", ignoreCase = true)) &&
+                        !idElemento.isNullOrEmpty()
+                    ) {
+                        ids.add(idElemento)
+                    }
+                }
+                adaptadorEvento.actualizarIntereses(ids)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        interesesListener = listener
+        ref.addValueEventListener(listener)
     }
 
     private fun cargarEventos() {
@@ -74,7 +103,7 @@ class FragmentEventos : Fragment() {
                         listaEventos.add(modelo)
                     }
                 }
-                listaEventos.reverse()
+                listaEventos.sortByDescending { it.tiempo }
                 adaptadorEvento.notifyDataSetChanged()
             }
 
@@ -227,6 +256,10 @@ class FragmentEventos : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        interesesListener?.let {
+            FirebaseDatabase.getInstance().getReference("Interesados").removeEventListener(it)
+        }
+        interesesListener = null
         _binding = null
     }
 }

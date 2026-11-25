@@ -47,14 +47,17 @@ class Registro_email : AppCompatActivity() {
         if (nombres.isEmpty()) {
             binding.EtNombres.error = "Ingrese su nombre completo"
             binding.EtNombres.requestFocus()
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.EtEmail.error = "Email inválido"
-            binding.EtEmail.requestFocus()
         } else if (email.isEmpty()) {
             binding.EtEmail.error = "Ingrese un email"
             binding.EtEmail.requestFocus()
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.EtEmail.error = "Email inválido"
+            binding.EtEmail.requestFocus()
         } else if (password.isEmpty()) {
             binding.EtPassword.error = "Ingrese la contraseña"
+            binding.EtPassword.requestFocus()
+        } else if (password.length < 6) {
+            binding.EtPassword.error = "La contraseña debe tener al menos 6 caracteres"
             binding.EtPassword.requestFocus()
         } else if (r_password.isEmpty()) {
             binding.EtRPassword.error = "Repita la contraseña"

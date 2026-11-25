@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">App gestion eventos uni</string>
+    <string name="app_name">Eventos UNISON</string>
 
     <!-- Toolbar -->
-    <string name="TituloRL">Gestión de Eventos Universitarios</string>
+    <string name="TituloRL">Gestión de Eventos UNISON</string>
 
     <!-- Menú inferior -->
     <string name="menu_eventos">Eventos</string>
