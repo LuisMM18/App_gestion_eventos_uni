@@ -76,5 +76,19 @@
             android:textSize="13sp"
             android:textStyle="bold" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/BtnCancelarInteres"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="10dp"
+            android:text="Cancelar mi registro"
+            android:textAllCaps="false"
+            android:textColor="@color/red_logout"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:cornerRadius="8dp"
+            app:strokeColor="@color/red_logout" />
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

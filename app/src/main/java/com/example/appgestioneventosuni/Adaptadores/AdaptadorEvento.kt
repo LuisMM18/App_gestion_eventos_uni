@@ -1,9 +1,12 @@
 package com.example.appgestioneventosuni.Adaptadores
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.appgestioneventosuni.Constantes
@@ -22,6 +25,13 @@ class AdaptadorEvento(
 ) : RecyclerView.Adapter<AdaptadorEvento.HolderEvento>() {
 
     private val firebaseAuth = FirebaseAuth.getInstance()
+    private val idsInteresados = HashSet<String>()
+
+    fun actualizarIntereses(nuevosIds: Set<String>) {
+        idsInteresados.clear()
+        idsInteresados.addAll(nuevosIds)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderEvento {
         val binding = ItemEventoBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -47,9 +57,54 @@ class AdaptadorEvento(
             holder.binding.IvImagenEvento.setImageResource(R.drawable.ic_eventos)
         }
 
-        holder.binding.BtnInteresEvento.setOnClickListener {
-            registrarInteresEvento(modelo)
+        val estaRegistrado = idsInteresados.contains(modelo.id)
+        if (estaRegistrado) {
+            holder.binding.BtnInteresEvento.text = "Cancelar mi interés"
+            holder.binding.BtnInteresEvento.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red_logout))
+        } else {
+            holder.binding.BtnInteresEvento.text = "Registrar mi interés en este evento"
+            holder.binding.BtnInteresEvento.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary))
         }
+
+        holder.binding.BtnInteresEvento.setOnClickListener {
+            if (estaRegistrado) {
+                confirmarCancelarInteresEvento(modelo)
+            } else {
+                registrarInteresEvento(modelo)
+            }
+        }
+    }
+
+    private fun confirmarCancelarInteresEvento(evento: ModeloEvento) {
+        val uid = firebaseAuth.currentUser?.uid ?: return
+        val idRegistro = "${evento.id}_$uid"
+
+        AlertDialog.Builder(context)
+            .setTitle("Cancelar interés")
+            .setMessage("¿Deseas quitar tu registro de interés en \"${evento.nombreEvento}\"?")
+            .setPositiveButton("Sí, cancelar") { _, _ ->
+                FirebaseDatabase.getInstance().getReference("Interesados")
+                    .child(idRegistro)
+                    .removeValue()
+                    .addOnSuccessListener {
+                        Toast.makeText(
+                            context,
+                            "Se canceló tu interés en: ${evento.nombreEvento}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            context,
+                            "No se pudo cancelar el registro: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+            .setNegativeButton("No", null)
+            .show()
     }
 
     private fun registrarInteresEvento(evento: ModeloEvento) {

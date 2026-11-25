@@ -43,11 +43,11 @@ class Login_email : AppCompatActivity() {
         email = binding.EtEmail.text.toString().trim()
         password = binding.EtPassword.text.toString().trim()
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.EtEmail.error = "Email inválido"
-            binding.EtEmail.requestFocus()
-        } else if (email.isEmpty()) {
+        if (email.isEmpty()) {
             binding.EtEmail.error = "Ingrese un email"
+            binding.EtEmail.requestFocus()
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.EtEmail.error = "Email inválido"
             binding.EtEmail.requestFocus()
         } else if (password.isEmpty()) {
             binding.EtPassword.error = "Ingrese la contraseña"

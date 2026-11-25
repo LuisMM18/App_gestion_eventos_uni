@@ -1,13 +1,17 @@
 package com.example.appgestioneventosuni.Adaptadores
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appgestioneventosuni.Constantes
 import com.example.appgestioneventosuni.Modelos.ModeloProyecto
+import com.example.appgestioneventosuni.R
 import com.example.appgestioneventosuni.databinding.ItemProyectoBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -21,6 +25,13 @@ class AdaptadorProyecto(
 ) : RecyclerView.Adapter<AdaptadorProyecto.HolderProyecto>() {
 
     private val firebaseAuth = FirebaseAuth.getInstance()
+    private val idsInteresados = HashSet<String>()
+
+    fun actualizarIntereses(nuevosIds: Set<String>) {
+        idsInteresados.clear()
+        idsInteresados.addAll(nuevosIds)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderProyecto {
         val binding = ItemProyectoBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -42,9 +53,58 @@ class AdaptadorProyecto(
             holder.binding.TvCategoriaProyecto.visibility = View.GONE
         }
 
-        holder.binding.BtnInteresProyecto.setOnClickListener {
-            registrarInteresProyecto(modelo)
+        val estaRegistrado = idsInteresados.contains(modelo.id)
+        if (estaRegistrado) {
+            val rojo = ContextCompat.getColor(context, R.color.red_logout)
+            holder.binding.BtnInteresProyecto.text = "Cancelar mi interés"
+            holder.binding.BtnInteresProyecto.setTextColor(rojo)
+            holder.binding.BtnInteresProyecto.iconTint = ColorStateList.valueOf(rojo)
+            holder.binding.BtnInteresProyecto.strokeColor = ColorStateList.valueOf(rojo)
+        } else {
+            val azul = ContextCompat.getColor(context, R.color.colorPrimary)
+            holder.binding.BtnInteresProyecto.text = "Me interesa participar"
+            holder.binding.BtnInteresProyecto.setTextColor(azul)
+            holder.binding.BtnInteresProyecto.iconTint = ColorStateList.valueOf(azul)
+            holder.binding.BtnInteresProyecto.strokeColor = ColorStateList.valueOf(azul)
         }
+
+        holder.binding.BtnInteresProyecto.setOnClickListener {
+            if (estaRegistrado) {
+                confirmarCancelarInteresProyecto(modelo)
+            } else {
+                registrarInteresProyecto(modelo)
+            }
+        }
+    }
+
+    private fun confirmarCancelarInteresProyecto(proyecto: ModeloProyecto) {
+        val uid = firebaseAuth.currentUser?.uid ?: return
+        val idRegistro = "${proyecto.id}_$uid"
+
+        AlertDialog.Builder(context)
+            .setTitle("Cancelar interés")
+            .setMessage("¿Deseas quitar tu registro de interés en \"${proyecto.nombreProyecto}\"?")
+            .setPositiveButton("Sí, cancelar") { _, _ ->
+                FirebaseDatabase.getInstance().getReference("Interesados")
+                    .child(idRegistro)
+                    .removeValue()
+                    .addOnSuccessListener {
+                        Toast.makeText(
+                            context,
+                            "Se canceló tu interés en: ${proyecto.nombreProyecto}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            context,
+                            "No se pudo cancelar el registro: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+            .setNegativeButton("No", null)
+            .show()
     }
 
     private fun registrarInteresProyecto(proyecto: ModeloProyecto) {

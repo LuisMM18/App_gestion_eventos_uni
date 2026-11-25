@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.appgestioneventosuni.Adaptadores.AdaptadorProyecto
 import com.example.appgestioneventosuni.Modelos.ModeloProyecto
 import com.example.appgestioneventosuni.databinding.FragmentConsultarProyectosBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -20,6 +21,8 @@ class FragmentConsultarProyectos : Fragment() {
 
     private lateinit var listaProyectos: ArrayList<ModeloProyecto>
     private lateinit var adaptadorProyecto: AdaptadorProyecto
+    private lateinit var firebaseAuth: FirebaseAuth
+    private var interesesListener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,11 +35,40 @@ class FragmentConsultarProyectos : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        firebaseAuth = FirebaseAuth.getInstance()
         listaProyectos = ArrayList()
         adaptadorProyecto = AdaptadorProyecto(requireContext(), listaProyectos)
         binding.RvProyectos.adapter = adaptadorProyecto
 
         cargarProyectos()
+        escucharInteresesUsuario()
+    }
+
+    private fun escucharInteresesUsuario() {
+        val uid = firebaseAuth.currentUser?.uid ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("Interesados")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (_binding == null) return
+                val ids = HashSet<String>()
+                for (ds in snapshot.children) {
+                    val uidRegistro = ds.child("uidUsuario").value?.toString()
+                    val tipo = ds.child("tipoElemento").value?.toString()
+                    val idElemento = ds.child("idElemento").value?.toString()
+                    if (uidRegistro == uid &&
+                        tipo.equals("Proyecto", ignoreCase = true) &&
+                        !idElemento.isNullOrEmpty()
+                    ) {
+                        ids.add(idElemento)
+                    }
+                }
+                adaptadorProyecto.actualizarIntereses(ids)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        interesesListener = listener
+        ref.addValueEventListener(listener)
     }
 
     private fun cargarProyectos() {
@@ -51,7 +83,7 @@ class FragmentConsultarProyectos : Fragment() {
                         listaProyectos.add(modelo)
                     }
                 }
-                listaProyectos.reverse()
+                listaProyectos.sortByDescending { it.tiempo }
                 adaptadorProyecto.notifyDataSetChanged()
 
                 if (listaProyectos.isEmpty()) {
@@ -69,6 +101,10 @@ class FragmentConsultarProyectos : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        interesesListener?.let {
+            FirebaseDatabase.getInstance().getReference("Interesados").removeEventListener(it)
+        }
+        interesesListener = null
         _binding = null
     }
 }
